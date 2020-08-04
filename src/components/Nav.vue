@@ -8,11 +8,14 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
+                <li class="nav-item" v-if="!isLoggedIn">
                     <router-link to="/login" class="nav-link">Login</router-link>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" v-if="!isLoggedIn">
                     <router-link to="/register" class="nav-link">Register</router-link>
+                </li>
+                <li class="nav-item" v-if="isLoggedIn">
+                    <a href="#" @click="logout()" class="nav-link">Logout</a>
                 </li>
             </ul>
 
@@ -23,7 +26,28 @@
 
 <script>
   export default {
-    name: 'Nav'
+    name: 'Nav',
+    computed: {
+        isLoggedIn: {
+            get(){
+                return this.$store.getters.IS_AUTHENTICATED;
+            },
+
+            set(val){
+                return val;
+            },
+        }
+    },
+    methods: {
+        logout(){
+            this.$store.dispatch("LOGOUT").then(result => {
+                console.log(result);
+                this.$router.push("/login");
+            }).catch(error => {
+                console.log(error);
+            });
+        }
+    }
   }
 </script>
 

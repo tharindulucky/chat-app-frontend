@@ -7,8 +7,13 @@ import App from './App.vue'
 import VueRouter from 'vue-router'
 import axios from 'axios'
 import VueSimpleAlert from "vue-simple-alert";
+import multiguard from 'vue-router-multiguard';
 
 import store from './stores/store';
+
+import logger from './middleware/logger';
+import authCheck from './middleware/auth-check';
+import authCheckInverse from './middleware/auth-check-inverse';
 
 import Register from './components/pages/auth/Register'
 import Login from './components/pages/auth/Login'
@@ -24,12 +29,30 @@ const router = new VueRouter({
   mode: 'history',
   base: __dirname,
   routes: [
-    { path: '/', component: Home },
-    { path: '/register', component: Register },
-    { path: '/login', component: Login },
-    { path: '/about', component: About },
+    { 
+      path: '/', 
+      name: 'home',
+      component: Home,
+      beforeEnter: multiguard([authCheck.isLoggedIn]),
+    },
+    { 
+      path: '/register', 
+      component: Register,
+      beforeEnter: multiguard([authCheckInverse.isNotLoggedIn]),
+    },
+    { 
+      path: '/login', 
+      component: Login, 
+      beforeEnter: multiguard([authCheckInverse.isNotLoggedIn]), 
+    },
+    { 
+      path: '/about', 
+      component: About 
+    },
   ]
 });
+
+router.beforeEach(logger.log);
 
 Vue.config.productionTip = false
 
