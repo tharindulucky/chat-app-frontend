@@ -84,6 +84,26 @@ export default {
             });
         },
 
+        CREATE_SESSION: (context, payload) => {
+
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer "+context.getters.GET_TOKEN
+              };
+
+            return new Promise((resolve, reject) => {
+                axios.post("/sessions/create", payload, {headers: headers}).then((response) => {
+                    if(response.status == 200 || response.status == 201){
+                        resolve(response);
+                    }else{
+                        reject(response);
+                    }
+                }).catch(error => {
+                    reject(error);
+                });
+            });
+        },
+
         SEND_MESSAGE: (context, payload) => {
             const headers = {
                 'Content-Type': 'application/json',

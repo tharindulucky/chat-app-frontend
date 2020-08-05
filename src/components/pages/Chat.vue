@@ -4,7 +4,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Chat!</div>
+                    <div class="card-header">Chat! {{isConnected}}</div>
                       <div class="card-body">
                         <div class="row">
                           <Sidebar :sessions="sessions"></Sidebar>
@@ -21,7 +21,7 @@
                                 <br>
                              
                                 <div class="form-group">
-                                    <textarea v-model="message" v-on:keyup.enter="sendMessage" class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                    <textarea v-model="message" v-on:keyup.enter="sendMessage" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type your message here and hit enter..."></textarea>
                                 </div>
                              
                           </div>
@@ -62,7 +62,7 @@
   padding: 20px;
   text-align: center;
   position: relative;
-  border-radius: 30px;
+  border-radius: 25px;
 }
 
 .sb3{
@@ -120,8 +120,30 @@
         sessions:[],
         selectedSession: null,
         sessionMessages: [],
-        message:null
+        message:null,
+        isConnected: false,
+        socketMessage: ''
     }),
+
+
+      sockets: {
+        connect() {
+          // Fired when the socket connects.
+          this.isConnected = true;
+        },
+
+        disconnect() {
+          this.isConnected = false;
+        },
+
+        // Fired when the server sends something on the "messageChannel" channel.
+        chatMessage(data) {
+          this.socketMessage = data
+          console.log("Fired!");
+          this.getMessages();
+        }
+      },
+
     
     methods: {
         getSessions(){
@@ -141,6 +163,9 @@
                 var element = this.$refs["chatWrapperBox"];
                 element.scrollTop = element.scrollHeight;
 
+                this.$socket.emit('pingServer', 'PING!');
+                this.$socket.emit('chatMessage', 'fffff', 'HHhhhhhhhhhhhhhhhhhhh');
+
                 this.message = null;
                 console.log(result);
                 this.getMessages();
@@ -150,6 +175,8 @@
         },
 
         getMessages(){
+
+          console.log("XXXXXXXXXXXXXX");
 
             this.$store.dispatch("GET_MESSAGES", this.selectedSession).then(result => {
                 console.log(result.data.data.messages);

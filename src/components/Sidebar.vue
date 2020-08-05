@@ -1,5 +1,7 @@
 <template>
     <div class="col-md-3">
+      <router-link :to="'/sessions/new'" class="btn btn-primary btn-block" role="button">New</router-link>
+      <br>
         <ul class="list-group">
           <li class="list-group-item" v-for="session in sessions" :key="session.id">
             <router-link :to="'/sessions/'+session.id+'/chat'" class="threads">{{session.contact.userData.name}}</router-link>

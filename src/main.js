@@ -8,6 +8,8 @@ import VueRouter from 'vue-router'
 import axios from 'axios'
 import VueSimpleAlert from "vue-simple-alert";
 import multiguard from 'vue-router-multiguard';
+import io from 'socket.io-client';
+import VueSocketIO from 'vue-socket.io'
 
 import store from './stores/store';
 
@@ -20,11 +22,15 @@ import Login from './components/pages/auth/Login'
 import Home from './components/pages/Home'
 import About from './components/pages/About'
 import Chat from './components/pages/Chat'
+import NewChat from './components/pages/NewChat'
+
+axios.defaults.baseURL = "http://localhost:8000";
+export const SocketInstance = io('http://localhost:8000');
 
 Vue.use(VueRouter);
 Vue.use(VueSimpleAlert);
-
-axios.defaults.baseURL = "http://localhost:8000";
+Vue.use(SocketInstance);
+Vue.use(new VueSocketIO({debug: true, connection: SocketInstance}));
 
 const router = new VueRouter({
   mode: 'history',
@@ -39,6 +45,11 @@ const router = new VueRouter({
     { 
       path: '/sessions/:id/chat', 
       component: Chat,
+      beforeEnter: multiguard([authCheck.isLoggedIn]),
+    },
+    { 
+      path: '/sessions/new', 
+      component: NewChat,
       beforeEnter: multiguard([authCheck.isLoggedIn]),
     },
     { 
