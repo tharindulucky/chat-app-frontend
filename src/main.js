@@ -19,6 +19,7 @@ import Register from './components/pages/auth/Register'
 import Login from './components/pages/auth/Login'
 import Home from './components/pages/Home'
 import About from './components/pages/About'
+import Chat from './components/pages/Chat'
 
 Vue.use(VueRouter);
 Vue.use(VueSimpleAlert);
@@ -33,6 +34,11 @@ const router = new VueRouter({
       path: '/', 
       name: 'home',
       component: Home,
+      beforeEnter: multiguard([authCheck.isLoggedIn]),
+    },
+    { 
+      path: '/sessions/:id/chat', 
+      component: Chat,
       beforeEnter: multiguard([authCheck.isLoggedIn]),
     },
     { 

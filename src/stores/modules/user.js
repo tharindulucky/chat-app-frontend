@@ -84,6 +84,46 @@ export default {
             });
         },
 
+        SEND_MESSAGE: (context, payload) => {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer "+context.getters.GET_TOKEN
+              };
+
+            return new Promise((resolve, reject) => {
+                axios.post('/messages/send', payload, {headers: headers}).then(response => {
+                    if(response.status == 201){
+                        resolve(response);
+                    }else{
+                        reject(response);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    reject(error);
+                });
+            });
+        },
+
+        GET_MESSAGES: (context, sessionId) => {
+            const headers = {
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer "+context.getters.GET_TOKEN
+              };
+
+            return new Promise((resolve, reject) => {
+                axios.get('/sessions/'+sessionId, {headers: headers}).then(response => {
+                    if(response.status == 200){
+                        resolve(response);
+                    }else{
+                        reject(response);
+                    }
+                }).catch(error => {
+                    console.log(error);
+                    reject(error);
+                });
+            });
+        },
+
         LOGOUT: (context) => {
             return new Promise((resolve) => {
                 context.commit("SET_TOKEN", null);
