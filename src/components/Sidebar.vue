@@ -2,7 +2,7 @@
     <div class="col-md-3">
         <ul class="list-group">
           <li class="list-group-item" v-for="session in sessions" :key="session.id">
-            <router-link to="/user" class="threads">Tharindu Lakshitha</router-link>
+            <router-link :to="'/sessions/'+session.id+'/chat'" class="threads">{{session.contact.userData.name}}</router-link>
           </li>
         </ul>
     </div>

@@ -10,13 +10,10 @@
                           <Sidebar :sessions="sessions"></Sidebar>
                           <div class="col-md-9">
 
-                                <div class="chat-wrapper" id="chat-wrapper-box">
+                                <div class="chat-wrapper" id="chat-wrapper-box" ref="chatWrapperBox">
                                     <ul class="chat-list">
                                         <li class="chat-list-item" v-for="message in sessionMessages" :key="message.id">
-                                            <div class="box sb4">{{message.content}}</div>
-                                        </li>
-                                        <li class="chat-list-item" >
-                                            <div class="box sb3">Hey there!</div>
+                                            <div class="box" :class="message.party == 'self' ? 'sb4' : 'sb3'">{{message.content}}</div>
                                         </li>
                                     </ul>
                                 </div>
@@ -65,6 +62,7 @@
   padding: 20px;
   text-align: center;
   position: relative;
+  border-radius: 30px;
 }
 
 .sb3{
@@ -120,7 +118,7 @@
     },
     data: () => ({
         sessions:[],
-        selectedSession: 1,
+        selectedSession: null,
         sessionMessages: [],
         message:null
     }),
@@ -139,6 +137,10 @@
                 sessionId: this.selectedSession,
                 content: this.message
             }).then(result => {
+
+                var element = this.$refs["chatWrapperBox"];
+                element.scrollTop = element.scrollHeight;
+
                 this.message = null;
                 console.log(result);
                 this.getMessages();
@@ -148,9 +150,6 @@
         },
 
         getMessages(){
-
-        var element = document.getElementById("chat-wrapper-box");
-        element.scrollTop = element.scrollHeight;
 
             this.$store.dispatch("GET_MESSAGES", this.selectedSession).then(result => {
                 console.log(result.data.data.messages);
@@ -162,7 +161,22 @@
     },
 
      beforeMount(){
-        this.getSessions()
+        
+        this.selectedSession = this.$route.params.id;
+        this.getSessions();
      },
+
+     mounted(){
+        this.selectedSession = this.$route.params.id;
+        this.getMessages();
+
+        var element = this.$refs["chatWrapperBox"];
+        element.scrollTop = element.scrollHeight;
+     },
+
+     created: function() {
+        this.selectedSession = this.$route.params.id;
+        this.getMessages();
+     }
   }
 </script>
