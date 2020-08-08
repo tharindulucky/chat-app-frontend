@@ -24,6 +24,10 @@
                                 <div class="form-group">
                                     <textarea v-model="message" @input="emitUserTyping" v-on:keyup.enter="sendMessage" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type your message here and hit enter..."></textarea>
                                 </div>
+
+                                <div class="form-group">
+                                    <button type="button" @click="sendMessage" class="btn btn-primary align-right send_btn">Send</button>
+                                </div>
                              
                           </div>
                         </div>
@@ -104,6 +108,25 @@
   border-bottom: 10px solid transparent;
   right: 19px;
   bottom: -19px;
+}
+
+.send_btn {
+    display: none;
+  }
+
+@media only screen and (max-width: 600px) {
+  .box {
+    width: 200px;
+    margin: 50px auto;
+    padding: 5px;
+    text-align: center;
+    position: relative;
+    border-radius: 25px;
+  }
+
+  .send_btn {
+    display: block;
+  }
 }
 
 
