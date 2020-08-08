@@ -4,7 +4,6 @@
       <br>
         <ul class="list-group">
           <li class="list-group-item" v-for="session in sessions" :key="session.id">
-            <router-link :to="'/sessions/'+session.id+'/chat'" class="threads">{{session.contact.userData.name}}</router-link>
             <router-link :to="{name: 'chat', params: {id: session.id}}" class="threads">{{session.contact.userData.name}}</router-link>
           </li>
         </ul>
