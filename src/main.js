@@ -24,8 +24,11 @@ import About from './components/pages/About'
 import Chat from './components/pages/Chat'
 import NewChat from './components/pages/NewChat'
 
-axios.defaults.baseURL = "http://localhost:8000";
-export const SocketInstance = io('http://localhost:8000');
+axios.defaults.baseURL = process.env.VUE_APP_APIHOST;
+export const SocketInstance = io(process.env.VUE_APP_WSHOST);
+
+console.log(process.env.VUE_APP_APIHOST)
+console.log(process.env.VUE_APP_WSHOST)
 
 Vue.use(VueRouter);
 Vue.use(VueSimpleAlert);
