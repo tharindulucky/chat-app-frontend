@@ -4,7 +4,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Chat! {{isConnected}}</div>
+                    <div class="card-header">{{contact.userData.name}}</div>
                       <div class="card-body">
                         <div class="row">
                           <Sidebar :sessions="sessions"></Sidebar>
@@ -17,11 +17,12 @@
                                         </li>
                                     </ul>
                                 </div>
+                                <p v-if="contactActivities.isTyping" style="text-align:left">{{ contact.userData.name }} is typing...</p>
 
                                 <br>
                              
                                 <div class="form-group">
-                                    <textarea v-model="message" v-on:keyup.enter="sendMessage" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type your message here and hit enter..."></textarea>
+                                    <textarea v-model="message" @input="emitUserTyping" v-on:keyup.enter="sendMessage" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Type your message here and hit enter..."></textarea>
                                 </div>
                              
                           </div>
@@ -122,7 +123,16 @@
         sessionMessages: [],
         message:null,
         isConnected: false,
-        socketMessage: ''
+        socketMessage: '',
+        contact: {
+          userData: {
+            id:null,
+            name:null
+          }
+        },
+        contactActivities:{
+            isTyping:false
+        }
     }),
 
 
@@ -137,10 +147,13 @@
         },
 
         // Fired when the server sends something on the "messageChannel" channel.
-        chatMessage(data) {
-          this.socketMessage = data
-          console.log("Fired!");
+        userChat() {
           this.getMessages();
+          this.contactActivities.isTyping = false;
+        },
+
+        userTyping() {
+          this.contactActivities.isTyping = true;
         }
       },
 
@@ -163,8 +176,7 @@
                 var element = this.$refs["chatWrapperBox"];
                 element.scrollTop = element.scrollHeight;
 
-                this.$socket.emit('pingServer', 'PING!');
-                this.$socket.emit('chatMessage', 'fffff', 'HHhhhhhhhhhhhhhhhhhhh');
+                this.emitUserSendMessage();
 
                 this.message = null;
                 console.log(result);
@@ -175,16 +187,28 @@
         },
 
         getMessages(){
-
-          console.log("XXXXXXXXXXXXXX");
-
             this.$store.dispatch("GET_MESSAGES", this.selectedSession).then(result => {
                 console.log(result.data.data.messages);
                 this.sessionMessages = result.data.data.messages;
+                this.contact = result.data.data.contact;
             }).catch(error => {
                 console.log(error);
             });
+        },
+
+        emitUserComeOnline(){
+          this.$socket.emit('userOnline', this.$store.getters.GET_USERDATA.id);
+        },
+
+        emitUserSendMessage(){
+          this.$socket.emit('userChat', this.contact.userId, this.$store.getters.GET_USERDATA.id);
+        },
+
+        emitUserTyping(){
+          this.$socket.emit('userTyping', this.contact.userId);
         }
+
+
     },
 
      beforeMount(){
@@ -199,11 +223,24 @@
 
         var element = this.$refs["chatWrapperBox"];
         element.scrollTop = element.scrollHeight;
+
+
      },
 
      created: function() {
         this.selectedSession = this.$route.params.id;
         this.getMessages();
-     }
+        this.emitUserComeOnline();
+     },
+
+     watch: {
+        'contactActivities.isTyping' : function(){
+          setTimeout(() => { 
+            console.log("FALSe");
+            this.contactActivities.isTyping = false;
+          }, 5000);
+        }
+    }
+
   }
 </script>
