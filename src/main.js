@@ -46,26 +46,31 @@ const router = new VueRouter({
       beforeEnter: multiguard([authCheck.isLoggedIn]),
     },
     { 
+      name: 'chat',
       path: '/sessions/:id/chat', 
       component: Chat,
       beforeEnter: multiguard([authCheck.isLoggedIn]),
     },
     { 
+      name: 'new_session',
       path: '/sessions/new', 
       component: NewChat,
       beforeEnter: multiguard([authCheck.isLoggedIn]),
     },
     { 
+      name: 'register',
       path: '/register', 
       component: Register,
       beforeEnter: multiguard([authCheckInverse.isNotLoggedIn]),
     },
     { 
+      name: 'login',
       path: '/login', 
       component: Login, 
       beforeEnter: multiguard([authCheckInverse.isNotLoggedIn]), 
     },
     { 
+      name: 'about',
       path: '/about', 
       component: About 
     },
